@@ -43,14 +43,27 @@ function Audio({state,data}){
   const t_beat = 60/tempo
   const t_bar = signature * t_beat
 
-  // React.useEffect(()=>{
-  //   setInterval(()=>{
-  //     let t = ( new Date() - state.begin + state.progress ) / 1000
-  //     let min = Math.floor( t/60 )
-  //     let s = Math.floor( t%60 )
-  //     console.log(min,s)
-  //   },1000)
-  // },[])
+  React.useEffect(()=>{
+    const grid = document.getElementById('grid')
+    
+    console.log(grid.childNodes)
+    let last;
+
+    let int = setInterval(()=>{
+      let t = ( new Date() - state.begin + state.progress ) / 1000
+      let b = findBar(data.bars,t)
+      let bar = grid.childNodes[b]
+
+      if(last)  last.style.border = '1px solid black'
+      if(bar){
+        bar.scrollIntoView() 
+        bar.style.border = '2px solid red'
+        last = bar
+      }
+    },200)
+
+    return ()=> clearInterval(int)
+  },[state])
 
   return (
     <div>
@@ -65,7 +78,7 @@ function Audio({state,data}){
       </div>
       <div>SECITONS</div>
       
-      <div style={{
+      <div id='grid' style={{
         display: 'grid', 
         gridTemplateColumns: 'repeat(4,1fr)',
         gridAutoRows: '100px',
@@ -102,6 +115,13 @@ function Audio({state,data}){
   )
 }
 
+function findBar(bars,t){
+  for(let x=0;x<bars.length;x++){
+    let bar = bars[x]
+    if(t>=bar.start && t<=bar.start+bar.duration)
+      return x;
+  }
+}
 
 const keyLetters = [ 'C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 
