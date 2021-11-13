@@ -60,8 +60,12 @@ function useSpotifApi(){
     const getPlayback = ()=>{
       return getter('/me/player')
     }
+
+    const getTrack = (id)=>{
+      return getter(`/audio-analysis/${id}`)
+    }
   
-    return [ token, { getPlayback, } ];
+    return [ token, { getPlayback, getTrack } ];
   }
 
 export default useSpotifApi;
